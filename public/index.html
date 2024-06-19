@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Validar Cédula</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    input {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Validar Cédula de Ciudadanía</h2>
+    <input type="text" id="cedula" placeholder="Ingrese su cédula">
+    <input type="text" id="nombres" placeholder="Ingrese su nombre">
+    <button onclick="validarCedula()">Validar</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    async function validarCedula() {
+      const cedula = document.getElementById('cedula').value;
+      const nombres = document.getElementById('nombres').value;
+      const resultDiv = document.getElementById('result');
+
+      const response = await fetch('/validar-cedula', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ cedula, nombres })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        resultDiv.innerHTML = `
+          <p>Cédula: ${data.cedula}</p>
+          <p>Nombres: ${data.nombres}</p>
+          <p>Es válida: ${data.esValida}</p>
+          <p>Validación externa: ${data.validacionExterna}</p>
+        `;
+      } else {
+        resultDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
